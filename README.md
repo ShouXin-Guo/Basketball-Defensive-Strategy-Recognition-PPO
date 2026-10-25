@@ -6,8 +6,6 @@ Research implementation of the methodology described in *Defensive Strategy Reco
 
 The system classifies a pre-identified basketball defensive event as **Switch (0)** or **Trap (1)**. Four parallel one-dimensional convolutional branches learn representations of eleven basketball movement/spatial features. An actor–critic policy is trained with clipped proximal policy optimization (PPO). Incorrect Trap predictions end a training episode early, and rewards emphasize Trap compared with the majority Switch class. The training/test protocol groups examples by game to avoid cross-game information leakage.
 
-**Reproducibility scope:** This repository implements the model and training protocol for **annotated defensive events**. The supplied manuscript does not completely specify how raw player trajectories are converted into event labels or how the four player movement vectors are reduced to scalar features. Those upstream steps require the full labeling algorithm from Tian et al. (2019), expert annotation/consensus where available, and a documented event-feature mapping. This code does **not** invent labels, reproduce expert re-annotation, or claim to have reproduced the published results. An event-level adapter supporting clearly defined input arrays is provided; raw SportVU JSON is not treated as automatically labeled data.
-
 ## Key features
 
 - Four configurable independent Conv1D branches, each with 32/64/128 filters, kernel size 3, same padding, ReLU by default, max-pooling after convolution stages 1 and 2, global average pooling, and 128 output units per branch. Concatenating four branches yields a 512-dimensional representation.
@@ -22,7 +20,7 @@ The system classifies a pre-identified basketball defensive event as **Switch (0
 
 Each defensive event contains eleven ordered features. F1–F4 summarize motion of O1, O2, D1 and D2, whose defensive relationships change. F5 measures the distance from their midpoint to the basket. F6–F8 are distances from O3, O4 and O5 to that midpoint; F9–F11 represent D3, D4 and D5. The manuscript does not specify the scalar encoding of a movement **vector**, sampling window length, or the raw-to-event preprocessing code. Therefore, feature generation and annotation must be completed separately, with a consistent definition across train and test sets.
 
-In the supplied architecture, each CNN processes the same ordered 11-feature signal, but uses independently initialized weights. For optional per-event sequences, the current implementation averages the input sequence over time before passing the 11-feature vector to the feature-axis convolutions. This is an **explicit implementation convention**, not a claim that the manuscript uses this exact temporal aggregation. When temporal information is critical, provide an agreed event-level transformation, or extend the encoder with evidence from the study authors.
+In the supplied architecture, each CNN processes the same ordered 11-feature signal, but uses independently initialized weights. For optional per-event sequences, the current implementation averages the input sequence over time before passing the 11-feature vector to the feature-axis convolutions. 
 
 ### Reward, policy and advantage estimation
 
